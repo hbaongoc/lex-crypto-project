@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 
 from lex.api import LEX, decrypt, encrypt
-from tests.support.mock_lex_dependencies import build_mock_dependencies
+from tests.support.mock_round_engine import build_mock_round_engine_module
 
 ROUND_KEYS = (bytes(16),) * 11
 INITIAL_STATE = bytes(16)
@@ -14,7 +14,10 @@ INITIAL_STATE = bytes(16)
 
 class TestLEXAPI(unittest.TestCase):
     def setUp(self) -> None:
-        self.dependencies = patch.dict("sys.modules", build_mock_dependencies())
+        self.dependencies = patch.dict(
+            "sys.modules",
+            {"lex.round_engine": build_mock_round_engine_module()},
+        )
         self.dependencies.start()
         self.addCleanup(self.dependencies.stop)
 
@@ -23,9 +26,7 @@ class TestLEXAPI(unittest.TestCase):
         ciphertext = encrypt(ROUND_KEYS, INITIAL_STATE, plaintext)
 
         self.assertIsInstance(ciphertext, bytes)
-        self.assertEqual(
-            decrypt(ROUND_KEYS, INITIAL_STATE, ciphertext), plaintext
-        )
+        self.assertEqual(decrypt(ROUND_KEYS, INITIAL_STATE, ciphertext), plaintext)
 
     def test_streaming_matches_one_shot(self) -> None:
         plaintext = bytes(index % 256 for index in range(151))
@@ -74,9 +75,13 @@ class TestLEXAPI(unittest.TestCase):
             memoryview(b"LEX"),
         )
 
-        self.assertEqual(
-            decrypt(ROUND_KEYS, INITIAL_STATE, ciphertext), b"LEX"
-        )
+        self.assertEqual(decrypt(ROUND_KEYS, INITIAL_STATE, ciphertext), b"LEX")
+
+    def test_invalid_round_keys_are_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            LEX((bytes(16),) * 10, INITIAL_STATE)
+        with self.assertRaises(ValueError):
+            LEX((bytes(15),) + (bytes(16),) * 10, INITIAL_STATE)
 
     def test_invalid_state_and_data_are_rejected(self) -> None:
         with self.assertRaises(TypeError):

@@ -6,12 +6,13 @@ delegates keystream generation to TV3's RoundEngine.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TypeAlias
 
 from .keystream import KeystreamBuffer
 
 ByteData: TypeAlias = bytes | bytearray | memoryview
-RoundKeys: TypeAlias = tuple[bytes, ...] | list[bytes]
+RoundKeys: TypeAlias = Sequence[bytes]
 
 
 def _coerce_data(data: ByteData, *, name: str) -> bytes:
@@ -55,8 +56,7 @@ class LEX:
         raw_data = _coerce_data(data, name="data")
         stream = self._keystream.read(len(raw_data))
         return bytes(
-            data_byte ^ stream_byte
-            for data_byte, stream_byte in zip(raw_data, stream)
+            data_byte ^ stream_byte for data_byte, stream_byte in zip(raw_data, stream)
         )
 
 

@@ -27,12 +27,12 @@ class MockRoundEngine:
         return bytes((start + index) % 256 for index in range(40))
 
 
-def build_mock_dependencies() -> dict[str, ModuleType]:
+def build_mock_round_engine_module() -> ModuleType:
     round_engine = types.ModuleType("lex.round_engine")
     round_engine.RoundEngine = MockRoundEngine
-    return {"lex.round_engine": round_engine}
+    return round_engine
 
 
-def install_mock_dependencies() -> None:
+def install_mock_round_engine() -> None:
     """Install a deterministic fake RoundEngine in sys.modules."""
-    sys.modules.update(build_mock_dependencies())
+    sys.modules["lex.round_engine"] = build_mock_round_engine_module()

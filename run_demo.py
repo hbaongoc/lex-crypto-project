@@ -20,9 +20,9 @@ def main() -> int:
     sys.path.insert(0, str(project_root / "src"))
 
     if args.mock:
-        from tests.support.mock_lex_dependencies import install_mock_dependencies
+        from tests.support.mock_round_engine import install_mock_round_engine
 
-        install_mock_dependencies()
+        install_mock_round_engine()
 
     try:
         from lex.api import LEX, decrypt, encrypt
@@ -32,7 +32,6 @@ def main() -> int:
         print(f"Details: {exc}")
         return 2
 
-    # TV4 supplies these values after deriving the round keys and IV state.
     round_keys = (bytes(16),) * 11
     initial_state = bytes(16)
     plaintext = b"LEX stream API demo"
