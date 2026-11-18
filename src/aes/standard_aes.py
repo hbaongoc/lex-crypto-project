@@ -1,8 +1,6 @@
 
 from collections.abc import Sequence
 
-from collections.abc import Sequence
-
 from .transforms import (
     add_round_key,
     mix_columns,
