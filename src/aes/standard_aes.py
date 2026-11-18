@@ -1,6 +1,5 @@
 
 from collections.abc import Sequence
-from typing import Union
 
 from .transforms import (
     sub_bytes,
@@ -9,7 +8,7 @@ from .transforms import (
     add_round_key,
 )
 
-ByteData = Union[bytes, bytearray, memoryview]
+ByteData = bytes | bytearray | memoryview
 
 def _validate_block(block: ByteData) -> bytes:
     if not isinstance(block, (bytes, bytearray, memoryview)):
