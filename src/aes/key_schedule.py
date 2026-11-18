@@ -1,5 +1,4 @@
 
-from typing import Union
 from .sbox import SBOX
 
 # Hang so vong cua AES-128
@@ -8,7 +7,7 @@ RCON = (
     0x01, 0x02, 0x04, 0x08, 0x10,
     0x20, 0x40, 0x80, 0x1B, 0x36,
 )
-ByteData = Union[bytes, bytearray, memoryview]
+ByteData = bytes | bytearray | memoryview
 def _validate_input(
     data: ByteData,
     expected_len: int,

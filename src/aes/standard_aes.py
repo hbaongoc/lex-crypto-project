@@ -1,11 +1,13 @@
 
 from collections.abc import Sequence
 
+from collections.abc import Sequence
+
 from .transforms import (
-    sub_bytes,
-    shift_rows,
-    mix_columns,
     add_round_key,
+    mix_columns,
+    shift_rows,
+    sub_bytes,
 )
 
 ByteData = bytes | bytearray | memoryview
